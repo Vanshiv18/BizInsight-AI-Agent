@@ -1,0 +1,1701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BI Intelligence Agent — Disruptive Technologies CA1</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+/* ═══════════════════════════════════════════════════
+   THEME SYSTEM — 4 gorgeous themes
+═══════════════════════════════════════════════════ */
+:root {
+  /* Default: Deep Cosmos (dark blue-purple) */
+  --bg: #05060f;
+  --bg2: #080b1a;
+  --card: #0d1020;
+  --card2: #121628;
+  --card3: #181e32;
+  --border: #1e2640;
+  --border2: #2a3358;
+  --pos: #00f5a0;
+  --neg: #ff4073;
+  --neu: #ffbe00;
+  --accent: #5b8fff;
+  --accent2: #8b5cf6;
+  --purple: #c084fc;
+  --cyan: #22d3ee;
+  --pink: #f472b6;
+  --text: #e2eaff;
+  --muted: #4d5c80;
+  --muted2: #7a8bbf;
+  --glow-pos: rgba(0,245,160,0.15);
+  --glow-acc: rgba(91,143,255,0.2);
+  --font-head: 'Sora', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --r: 18px;
+  --r-sm: 10px;
+  --shadow: 0 8px 40px rgba(0,0,0,0.5);
+  --chat-height: 580px;
+}
+
+[data-theme="aurora"] {
+  --bg: #020b12;
+  --bg2: #041018;
+  --card: #071820;
+  --card2: #0a2030;
+  --card3: #0e2a3f;
+  --border: #0f2d40;
+  --border2: #163d55;
+  --pos: #00ffcc;
+  --neg: #ff5555;
+  --neu: #ffaa00;
+  --accent: #00bfff;
+  --accent2: #0077ff;
+  --purple: #7f7fff;
+  --cyan: #00ffe0;
+  --text: #d0f0ff;
+  --muted: #2d5060;
+  --muted2: #5a8090;
+}
+
+[data-theme="sunset"] {
+  --bg: #0f0800;
+  --bg2: #180e00;
+  --card: #1f1200;
+  --card2: #271800;
+  --card3: #301d00;
+  --border: #3a2200;
+  --border2: #4f3000;
+  --pos: #00e676;
+  --neg: #ff1744;
+  --neu: #ffea00;
+  --accent: #ff6d00;
+  --accent2: #ff4081;
+  --purple: #e040fb;
+  --cyan: #00e5ff;
+  --text: #fff3e0;
+  --muted: #5c3700;
+  --muted2: #9c6020;
+}
+
+[data-theme="forest"] {
+  --bg: #030a06;
+  --bg2: #050f08;
+  --card: #091510;
+  --card2: #0d1c16;
+  --card3: #12241c;
+  --border: #1a3028;
+  --border2: #224038;
+  --pos: #00ff88;
+  --neg: #ff4444;
+  --neu: #ffcc00;
+  --accent: #00cc66;
+  --accent2: #00aaff;
+  --purple: #aa55ff;
+  --cyan: #00ffee;
+  --text: #d0ffe0;
+  --muted: #1a4030;
+  --muted2: #4a8060;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font-body);
+  min-height:100vh;
+  overflow-x:hidden;
+  transition:background .4s, color .3s;
+}
+
+/* ── Animated background ── */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 15% 0%, rgba(91,143,255,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 85% 100%, rgba(139,92,246,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 50% 50%, rgba(0,245,160,0.02) 0%, transparent 70%),
+    linear-gradient(rgba(91,143,255,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(91,143,255,0.018) 1px, transparent 1px);
+  background-size:100% 100%, 100% 100%, 100% 100%, 52px 52px, 52px 52px;
+  pointer-events:none;
+  transition:background-image .4s;
+}
+
+.orb{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;animation:orbFloat 8s ease-in-out infinite;}
+.orb1{width:500px;height:500px;top:-120px;left:-120px;background:rgba(91,143,255,0.07);}
+.orb2{width:350px;height:350px;bottom:5%;right:-80px;background:rgba(139,92,246,0.06);animation-delay:-4s;}
+.orb3{width:200px;height:200px;top:50%;left:40%;background:rgba(0,245,160,0.04);animation-delay:-2s;}
+@keyframes orbFloat{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-30px) scale(1.05);}}
+
+.container{max-width:1380px;margin:0 auto;padding:0 28px;position:relative;z-index:1;}
+
+/* ── HEADER ── */
+header{
+  padding:32px 0 24px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:32px;
+}
+.header-inner{display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+.logo-ring{
+  width:56px;height:56px;border-radius:16px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;font-size:28px;
+  box-shadow:0 0 30px rgba(91,143,255,0.5);
+  animation:logoPulse 4s ease-in-out infinite;
+  position:relative;overflow:hidden;
+}
+.logo-ring::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.15),transparent);
+}
+@keyframes logoPulse{0%,100%{box-shadow:0 0 30px rgba(91,143,255,0.5);}50%{box-shadow:0 0 50px rgba(91,143,255,0.8),0 0 80px rgba(139,92,246,0.3);}}
+
+.header-text h1{
+  font-family:var(--font-head);
+  font-size:clamp(20px,3vw,32px);font-weight:800;color:#fff;
+  letter-spacing:-0.8px;line-height:1.15;
+}
+.header-text .sub{
+  font-family:var(--font-mono);font-size:10.5px;color:var(--muted2);margin-top:4px;
+  letter-spacing:.4px;
+}
+
+.header-right{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.pill{
+  font-family:var(--font-mono);font-size:11px;padding:7px 16px;border-radius:99px;
+  border:1px solid;display:flex;align-items:center;gap:6px;white-space:nowrap;cursor:default;
+}
+.pill-blue{background:rgba(91,143,255,0.1);border-color:rgba(91,143,255,0.3);color:var(--accent);}
+.pill-green{background:rgba(0,245,160,0.08);border-color:rgba(0,245,160,0.25);color:var(--pos);}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--pos);animation:livePulse 1.5s ease infinite;}
+@keyframes livePulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.7);}}
+
+/* ── THEME SWITCHER ── */
+.theme-switcher{display:flex;gap:6px;align-items:center;}
+.theme-btn{
+  width:26px;height:26px;border-radius:50%;border:2px solid transparent;
+  cursor:pointer;transition:transform .2s,border-color .2s;
+}
+.theme-btn:hover{transform:scale(1.2);}
+.theme-btn.active{border-color:var(--text);}
+.t-cosmos{background:linear-gradient(135deg,#5b8fff,#8b5cf6);}
+.t-aurora{background:linear-gradient(135deg,#00bfff,#00ffcc);}
+.t-sunset{background:linear-gradient(135deg,#ff6d00,#ff4081);}
+.t-forest{background:linear-gradient(135deg,#00cc66,#00aaff);}
+
+/* ── TABS ── */
+.tab-bar{
+  display:flex;gap:5px;margin-bottom:30px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);padding:5px;width:fit-content;
+  box-shadow:var(--shadow);
+}
+.tab-btn{
+  padding:10px 22px;border-radius:13px;cursor:pointer;
+  font-size:13.5px;font-weight:700;font-family:var(--font-head);
+  color:var(--muted2);border:none;background:none;
+  transition:all .25s cubic-bezier(.4,0,.2,1);
+  position:relative;display:flex;align-items:center;gap:8px;
+}
+.tab-btn.active{
+  background:linear-gradient(135deg,var(--card3),var(--card2));
+  color:#fff;
+  box-shadow:0 2px 14px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.07);
+}
+.tab-btn:hover:not(.active){color:var(--text);background:rgba(255,255,255,.03);}
+.tab-indicator{
+  position:absolute;bottom:3px;left:50%;transform:translateX(-50%);
+  width:20px;height:2px;border-radius:2px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  opacity:0;transition:opacity .25s;
+}
+.tab-btn.active .tab-indicator{opacity:1;}
+.tab-count{
+  background:rgba(91,143,255,.15);color:var(--accent);
+  font-family:var(--font-mono);font-size:9px;font-weight:700;
+  padding:2px 7px;border-radius:99px;border:1px solid rgba(91,143,255,.2);
+}
+
+.panel{display:none;animation:panelIn .3s cubic-bezier(.4,0,.2,1);}
+.panel.active{display:block;}
+@keyframes panelIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── KPI GRID ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin-bottom:28px;}
+.kpi-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+  padding:22px 24px;position:relative;overflow:hidden;cursor:default;
+  transition:transform .25s cubic-bezier(.4,0,.2,1),border-color .25s,box-shadow .25s;
+}
+.kpi-card:hover{transform:translateY(-5px);border-color:var(--border2);box-shadow:0 16px 48px rgba(0,0,0,.4);}
+.kpi-card::before{
+  content:'';position:absolute;inset:0;opacity:0;transition:opacity .3s;
+  background:radial-gradient(ellipse at 50% 0%,rgba(255,255,255,.05),transparent 70%);
+  pointer-events:none;
+}
+.kpi-card:hover::before{opacity:1;}
+.kpi-accent-line{position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0;}
+.kpi-icon{font-size:28px;margin-bottom:10px;display:block;line-height:1;}
+.kpi-label{font-family:var(--font-mono);font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:1.4px;margin-bottom:8px;}
+.kpi-val{font-size:34px;font-weight:800;line-height:1;letter-spacing:-1.5px;font-family:var(--font-head);}
+.kpi-sub{font-family:var(--font-mono);font-size:10.5px;color:var(--muted2);margin-top:8px;}
+.kpi-bg-num{
+  position:absolute;right:14px;top:50%;transform:translateY(-50%);
+  font-size:72px;font-weight:900;opacity:.03;line-height:1;pointer-events:none;
+  font-family:var(--font-mono);
+}
+
+/* ── DATASET MINI BANNER on dashboard ── */
+.dataset-banner{
+  background:linear-gradient(135deg,var(--card2),var(--card3));
+  border:1px solid var(--border2);border-radius:var(--r);
+  padding:20px 28px;margin-bottom:28px;
+  display:flex;align-items:center;gap:20px;flex-wrap:wrap;
+  position:relative;overflow:hidden;
+}
+.dataset-banner::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(91,143,255,.06),rgba(139,92,246,.04),transparent);
+  pointer-events:none;
+}
+.db-icon{font-size:36px;flex-shrink:0;}
+.db-info{flex:1;}
+.db-title{font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;font-family:var(--font-head);}
+.db-sub{font-family:var(--font-mono);font-size:10.5px;color:var(--muted2);}
+.db-chips{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto;}
+.db-chip{
+  font-family:var(--font-mono);font-size:10px;font-weight:600;
+  padding:5px 12px;border-radius:99px;border:1px solid;
+  white-space:nowrap;
+}
+.db-chip-b{background:rgba(91,143,255,.1);border-color:rgba(91,143,255,.3);color:var(--accent);}
+.db-chip-g{background:rgba(0,245,160,.08);border-color:rgba(0,245,160,.25);color:var(--pos);}
+.db-chip-p{background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.3);color:var(--purple);}
+.db-chip-y{background:rgba(255,190,0,.1);border-color:rgba(255,190,0,.3);color:var(--neu);}
+
+/* ── SENTIMENT BAR ── */
+.sent-section{margin-bottom:28px;}
+.sent-section-title{
+  font-family:var(--font-mono);font-size:10.5px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:1.4px;margin-bottom:14px;
+  display:flex;align-items:center;gap:8px;
+}
+.sent-section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+.sent-bar-track{
+  display:flex;height:20px;border-radius:99px;overflow:hidden;
+  background:rgba(255,255,255,.025);gap:3px;
+  box-shadow:inset 0 2px 4px rgba(0,0,0,.4),0 0 20px rgba(0,0,0,.2);
+}
+.sent-seg{
+  height:100%;border-radius:99px;
+  transition:flex 1.4s cubic-bezier(.4,0,.2,1);
+  position:relative;overflow:hidden;
+}
+.sent-seg::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(255,255,255,.15) 0%,transparent 60%);
+}
+.sent-labels{display:flex;gap:28px;margin-top:14px;flex-wrap:wrap;}
+.sent-label{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;}
+.sent-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.sent-pct{font-family:var(--font-mono);font-size:12.5px;opacity:.7;margin-left:2px;}
+
+/* ── CHART GRID ── */
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:28px;}
+.chart-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);padding:24px;overflow:hidden;position:relative;
+  transition:border-color .25s,box-shadow .25s;
+}
+.chart-card:hover{border-color:var(--border2);box-shadow:0 8px 40px rgba(0,0,0,.3);}
+.chart-card.wide{grid-column:1/-1;}
+.chart-card-title{
+  font-size:13px;font-weight:700;margin-bottom:20px;
+  display:flex;align-items:center;gap:10px;color:var(--text);
+  font-family:var(--font-head);
+}
+.chart-card-title .icon{
+  width:32px;height:32px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;font-size:16px;
+  background:rgba(255,255,255,.05);flex-shrink:0;
+}
+canvas{display:block;max-height:280px;}
+
+/* ── FILTER BAR ── */
+.filter-bar{
+  display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap;align-items:center;
+}
+.filter-label{font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:1px;}
+.filter-chip{
+  padding:7px 16px;border-radius:99px;border:1px solid var(--border);
+  background:transparent;color:var(--muted2);font-size:11.5px;font-weight:600;
+  font-family:var(--font-head);cursor:pointer;transition:all .2s;
+}
+.filter-chip.active,.filter-chip:hover{
+  background:rgba(91,143,255,0.15);border-color:rgba(91,143,255,.4);color:var(--accent);
+}
+
+/* ── INSIGHTS GRID ── */
+.insights-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.insight-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+  padding:24px;position:relative;overflow:hidden;
+  transition:border-color .25s,transform .25s,box-shadow .25s;
+}
+.insight-card:hover{border-color:var(--border2);transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,.3);}
+.insight-card h3{font-size:14px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:10px;font-family:var(--font-head);}
+.insight-icon-box{
+  width:34px;height:34px;border-radius:10px;display:flex;align-items:center;
+  justify-content:center;font-size:17px;flex-shrink:0;
+}
+
+.list-item{
+  display:flex;align-items:center;gap:12px;padding:12px 0;
+  border-bottom:1px solid rgba(30,38,64,.7);
+  transition:background .15s;
+}
+.list-item:last-child{border-bottom:none;}
+.list-item:hover{background:rgba(255,255,255,.015);}
+.rank-badge{
+  width:28px;height:28px;border-radius:8px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-mono);font-size:11px;font-weight:700;
+  background:rgba(255,255,255,.05);color:var(--muted);
+}
+.item-label{flex:1;font-size:13px;font-family:var(--font-mono);}
+.item-val{font-family:var(--font-mono);font-size:12px;color:var(--muted2);}
+
+.reco-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(30,38,64,.7);font-size:13px;line-height:1.55;}
+.reco-item:last-child{border-bottom:none;}
+.reco-num{
+  width:28px;height:28px;border-radius:8px;min-width:28px;
+  background:rgba(91,143,255,.12);color:var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-mono);font-size:11px;font-weight:700;margin-top:2px;
+}
+
+/* ── CHATBOT ── */
+.chat-layout{display:grid;grid-template-columns:290px 1fr;gap:20px;}
+
+.quick-panel{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+  padding:20px;height:fit-content;position:sticky;top:20px;
+}
+.quick-panel-title{
+  font-family:var(--font-mono);font-size:10px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:1.4px;margin-bottom:14px;
+  display:flex;align-items:center;gap:6px;
+}
+.quick-section{margin-bottom:14px;}
+.quick-section-label{
+  font-family:var(--font-mono);font-size:9px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:1px;padding:6px 0 6px 4px;
+  border-bottom:1px solid var(--border);margin-bottom:8px;
+}
+.quick-btn{
+  display:block;width:100%;text-align:left;
+  background:rgba(255,255,255,.022);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:9px 13px;
+  color:var(--muted2);font-size:11.5px;cursor:pointer;
+  transition:all .2s;margin-bottom:6px;font-family:var(--font-body);font-weight:600;
+  line-height:1.4;
+}
+.quick-btn:hover{
+  background:rgba(91,143,255,.1);border-color:rgba(91,143,255,.35);
+  color:var(--accent);transform:translateX(3px);
+}
+.quick-btn:last-child{margin-bottom:0;}
+
+.chat-window{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+  display:flex;flex-direction:column;height:var(--chat-height);overflow:hidden;
+}
+.chat-head{
+  padding:16px 20px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:14px;
+  background:linear-gradient(180deg,var(--card3) 0%,var(--card) 100%);
+  flex-shrink:0;
+}
+.bot-avatar{
+  width:44px;height:44px;border-radius:14px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;font-size:22px;
+  box-shadow:0 0 24px rgba(91,143,255,.5);position:relative;
+}
+.bot-avatar::after{
+  content:'';position:absolute;bottom:-2px;right:-2px;
+  width:11px;height:11px;border-radius:50%;background:var(--pos);
+  border:2px solid var(--card);animation:livePulse 1.5s ease infinite;
+}
+.bot-name{font-weight:800;font-size:15px;font-family:var(--font-head);}
+.bot-model{font-family:var(--font-mono);font-size:9.5px;color:var(--accent);margin-top:2px;}
+.chat-actions{margin-left:auto;display:flex;gap:8px;}
+.chat-action-btn{
+  height:34px;border-radius:9px;border:1px solid var(--border);
+  background:transparent;color:var(--muted);cursor:pointer;font-size:13px;
+  display:flex;align-items:center;justify-content:center;padding:0 10px;
+  transition:all .2s;gap:5px;font-family:var(--font-mono);font-size:11px;
+}
+.chat-action-btn:hover{background:var(--card3);color:var(--text);}
+
+.chat-msgs{
+  flex:1;overflow-y:auto;padding:22px;
+  display:flex;flex-direction:column;gap:16px;
+  scroll-behavior:smooth;
+}
+.chat-msgs::-webkit-scrollbar{width:4px;}
+.chat-msgs::-webkit-scrollbar-track{background:transparent;}
+.chat-msgs::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+
+.msg{max-width:84%;animation:msgIn .3s cubic-bezier(.4,0,.2,1);}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.msg.user{align-self:flex-end;}
+.msg.bot{align-self:flex-start;}
+.msg-bubble{
+  padding:13px 17px;border-radius:16px;font-size:13px;
+  line-height:1.7;white-space:pre-wrap;word-break:break-word;
+}
+.msg.user .msg-bubble{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;border-bottom-right-radius:4px;
+  box-shadow:0 4px 18px rgba(91,143,255,.35);
+  font-family:var(--font-body);
+}
+.msg.bot .msg-bubble{
+  background:var(--card2);border:1px solid var(--border);
+  border-bottom-left-radius:4px;
+  font-family:var(--font-mono);font-size:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.3);
+}
+.msg-meta{font-size:10px;color:var(--muted);margin-top:5px;font-family:var(--font-mono);}
+.msg.user .msg-meta{text-align:right;}
+
+.typing-indicator{align-self:flex-start;}
+.typing-dots{
+  display:flex;gap:5px;align-items:center;
+  background:var(--card2);border:1px solid var(--border);
+  padding:12px 18px;border-radius:16px;border-bottom-left-radius:4px;
+}
+.typing-dots span{
+  width:6px;height:6px;border-radius:50%;background:var(--muted);
+  animation:typingBounce .9s ease infinite;
+}
+.typing-dots span:nth-child(2){animation-delay:.15s;}
+.typing-dots span:nth-child(3){animation-delay:.3s;}
+@keyframes typingBounce{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-6px);}}
+
+.chat-input-row{
+  padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:10px;
+  background:var(--card);flex-shrink:0;
+}
+.chat-input{
+  flex:1;background:var(--card2);border:1px solid var(--border);
+  border-radius:13px;padding:12px 18px;color:var(--text);
+  font-size:13.5px;outline:none;font-family:var(--font-body);
+  transition:border-color .2s,box-shadow .2s;
+}
+.chat-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(91,143,255,.12);}
+.chat-input::placeholder{color:var(--muted);}
+.send-btn{
+  width:48px;height:48px;border-radius:13px;border:none;flex-shrink:0;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;cursor:pointer;font-size:18px;
+  display:flex;align-items:center;justify-content:center;
+  transition:opacity .2s,transform .15s,box-shadow .2s;
+  box-shadow:0 4px 16px rgba(91,143,255,.45);
+}
+.send-btn:hover{opacity:.9;transform:scale(1.07);}
+.send-btn:active{transform:scale(.95);}
+
+/* ── DATASET PANEL ── */
+.ds-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.ds-stat{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+  padding:22px 24px;transition:border-color .2s,transform .2s,box-shadow .2s;
+  position:relative;overflow:hidden;
+}
+.ds-stat:hover{border-color:var(--border2);transform:translateY(-3px);box-shadow:0 10px 36px rgba(0,0,0,.3);}
+.ds-stat::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:var(--r) var(--r) 0 0;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+}
+.ds-stat-label{font-family:var(--font-mono);font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px;}
+.ds-stat-val{font-size:28px;font-weight:800;color:var(--accent);font-family:var(--font-head);}
+.ds-stat-sub{font-family:var(--font-mono);font-size:10px;color:var(--muted2);margin-top:4px;}
+
+.ds-cols{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;}
+.ds-col-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:22px;
+}
+.ds-col-title{font-size:13px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;font-family:var(--font-head);}
+.col-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(30,38,64,.6);font-size:12.5px;}
+.col-row:last-child{border-bottom:none;}
+.col-name{font-family:var(--font-mono);font-size:11.5px;color:var(--accent);min-width:140px;}
+.col-type{font-family:var(--font-mono);font-size:10px;color:var(--muted2);}
+.col-desc{font-size:12px;color:var(--text);opacity:.7;}
+
+.table-wrap{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;
+}
+.table-header{
+  padding:16px 22px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--card2);
+}
+.table-header h3{font-size:14px;font-weight:700;font-family:var(--font-head);}
+.tbl-tag{
+  font-family:var(--font-mono);font-size:10px;
+  background:rgba(0,245,160,.08);color:var(--pos);padding:5px 12px;border-radius:99px;
+  border:1px solid rgba(0,245,160,.2);
+}
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:12.5px;}
+thead tr{background:rgba(255,255,255,.022);}
+th{
+  padding:12px 16px;text-align:left;
+  font-family:var(--font-mono);font-size:9.5px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.8px;border-bottom:1px solid var(--border);
+  white-space:nowrap;
+}
+td{padding:11px 16px;border-bottom:1px solid rgba(30,38,64,.4);font-family:var(--font-mono);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.012);}
+.badge{padding:4px 11px;border-radius:99px;font-family:var(--font-mono);font-size:9.5px;font-weight:700;}
+.badge-pos{background:rgba(0,245,160,.1);color:var(--pos);border:1px solid rgba(0,245,160,.2);}
+.badge-neg{background:rgba(255,64,115,.1);color:var(--neg);border:1px solid rgba(255,64,115,.2);}
+.badge-neu{background:rgba(255,190,0,.1);color:var(--neu);border:1px solid rgba(255,190,0,.2);}
+
+/* ── SCROLL REVEAL ── */
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .5s ease,transform .5s ease;}
+.reveal.shown{opacity:1;transform:translateY(0);}
+
+/* ── TOAST ── */
+.toast-container{position:fixed;bottom:28px;right:28px;z-index:200;display:flex;flex-direction:column;gap:10px;pointer-events:none;}
+.toast{
+  background:var(--card3);border:1px solid var(--border2);border-radius:13px;
+  padding:12px 18px;font-size:12.5px;font-weight:600;
+  display:flex;align-items:center;gap:10px;
+  box-shadow:0 8px 40px rgba(0,0,0,.6);
+  animation:toastIn .3s cubic-bezier(.4,0,.2,1);max-width:320px;
+  font-family:var(--font-body);pointer-events:auto;
+}
+@keyframes toastIn{from{opacity:0;transform:translateX(30px);}to{opacity:1;transform:translateX(0);}}
+.toast-out{animation:toastOut .3s ease forwards;}
+@keyframes toastOut{to{opacity:0;transform:translateX(30px);}}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1024px){
+  .charts-grid,.insights-grid{grid-template-columns:1fr;}
+  .chart-card.wide{grid-column:1;}
+  .chat-layout{grid-template-columns:1fr;}
+  .quick-panel{display:none;}
+  .ds-stats{grid-template-columns:repeat(2,1fr);}
+  .ds-cols{grid-template-columns:1fr;}
+}
+@media(max-width:640px){
+  .header-right{display:none;}
+  .ds-stats{grid-template-columns:1fr 1fr;}
+  .kpi-grid{grid-template-columns:1fr 1fr;}
+  .tab-btn{padding:8px 13px;font-size:12px;}
+  .dataset-banner{flex-direction:column;align-items:flex-start;}
+  .db-chips{margin-left:0;}
+}
+
+/* ── Misc ── */
+.section-divider{
+  display:flex;align-items:center;gap:10px;margin:8px 0 20px;
+  font-family:var(--font-mono);font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;
+}
+.section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+</style>
+</head>
+<body>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+<div class="toast-container" id="toastContainer"></div>
+
+<div class="container">
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="logo-ring">🤖</div>
+    <div class="header-text">
+      <h1>BI Intelligence Agent</h1>
+      <div class="sub">MGNM521 · Disruptive Technologies · CA1 · Dr. Arun Khatri</div>
+    </div>
+    <div class="header-right">
+      <div class="theme-switcher">
+        <button class="theme-btn t-cosmos active" onclick="setTheme('cosmos',this)" title="Cosmos"></button>
+        <button class="theme-btn t-aurora" onclick="setTheme('aurora',this)" title="Aurora"></button>
+        <button class="theme-btn t-sunset" onclick="setTheme('sunset',this)" title="Sunset"></button>
+        <button class="theme-btn t-forest" onclick="setTheme('forest',this)" title="Forest"></button>
+      </div>
+      <div class="pill pill-green"><div class="live-dot"></div>Live Analysis</div>
+      <div class="pill pill-blue">10,500 Reviews Analyzed</div>
+    </div>
+  </div>
+</header>
+
+<!-- TABS -->
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('dashboard',this)">
+    <span>📊</span> Dashboard<div class="tab-indicator"></div>
+  </button>
+  <button class="tab-btn" onclick="switchTab('chatbot',this)">
+    <span>🤖</span> AI Chatbot <span class="tab-count">GPT-style</span><div class="tab-indicator"></div>
+  </button>
+  <button class="tab-btn" onclick="switchTab('insights',this)">
+    <span>💡</span> Insights<div class="tab-indicator"></div>
+  </button>
+  <button class="tab-btn" onclick="switchTab('dataset',this)">
+    <span>📁</span> Dataset <span class="tab-count">10,500</span><div class="tab-indicator"></div>
+  </button>
+</div>
+
+<!-- ═══════════════ DASHBOARD ═══════════════ -->
+<div class="panel active" id="panel-dashboard">
+
+  <!-- Dataset Banner -->
+  <div class="dataset-banner reveal">
+    <div class="db-icon">📦</div>
+    <div class="db-info">
+      <div class="db-title">E-Commerce Customer Review Dataset</div>
+      <div class="db-sub">10,500 records · 11 features · Jan 2023 – Dec 2024 · 5 platforms · 10 categories · 74.4% verified</div>
+    </div>
+    <div class="db-chips">
+      <span class="db-chip db-chip-b">Amazon · Flipkart · Myntra</span>
+      <span class="db-chip db-chip-g">Nykaa · Meesho</span>
+      <span class="db-chip db-chip-p">10 Categories</span>
+      <span class="db-chip db-chip-y">2 Years of Data</span>
+    </div>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="kpi-grid">
+    <div class="kpi-card reveal" style="--delay:0s" onclick="showToast('✅ 4,786 positive reviews across all platforms','var(--pos)')">
+      <div class="kpi-accent-line" style="background:linear-gradient(90deg,var(--pos),#00c97a)"></div>
+      <span class="kpi-icon">😊</span>
+      <div class="kpi-label">Positive Sentiment</div>
+      <div class="kpi-val" style="color:var(--pos)">45.6%</div>
+      <div class="kpi-sub">4,786 reviews</div>
+      <div class="kpi-bg-num">+</div>
+    </div>
+    <div class="kpi-card reveal" style="--delay:.05s" onclick="showToast('❌ 3,676 negative reviews — 35% of total','var(--neg)')">
+      <div class="kpi-accent-line" style="background:linear-gradient(90deg,var(--neg),#cc2255)"></div>
+      <span class="kpi-icon">😠</span>
+      <div class="kpi-label">Negative Sentiment</div>
+      <div class="kpi-val" style="color:var(--neg)">35.0%</div>
+      <div class="kpi-sub">3,676 reviews</div>
+      <div class="kpi-bg-num">−</div>
+    </div>
+    <div class="kpi-card reveal" style="--delay:.1s" onclick="showToast('➖ 2,038 neutral reviews logged','var(--neu)')">
+      <div class="kpi-accent-line" style="background:linear-gradient(90deg,var(--neu),#f97316)"></div>
+      <span class="kpi-icon">😐</span>
+      <div class="kpi-label">Neutral Sentiment</div>
+      <div class="kpi-val" style="color:var(--neu)">19.4%</div>
+      <div class="kpi-sub">2,038 reviews</div>
+      <div class="kpi-bg-num">~</div>
+    </div>
+    <div class="kpi-card reveal" style="--delay:.15s" onclick="showToast('⭐ Average rating is 3.21 out of 5.0','var(--accent)')">
+      <div class="kpi-accent-line" style="background:linear-gradient(90deg,var(--accent),var(--cyan))"></div>
+      <span class="kpi-icon">⭐</span>
+      <div class="kpi-label">Average Rating</div>
+      <div class="kpi-val" style="color:var(--accent)">3.21</div>
+      <div class="kpi-sub">Out of 5.0 stars</div>
+      <div class="kpi-bg-num">★</div>
+    </div>
+    <div class="kpi-card reveal" style="--delay:.2s" onclick="showToast('📈 Avg Sentiment Score: +0.106 (range −1 to +1)','var(--purple)')">
+      <div class="kpi-accent-line" style="background:linear-gradient(90deg,var(--purple),var(--accent2))"></div>
+      <span class="kpi-icon">📈</span>
+      <div class="kpi-label">Avg Sentiment Score</div>
+      <div class="kpi-val" style="color:var(--purple)">+0.106</div>
+      <div class="kpi-sub">Scale: −1.0 → +1.0</div>
+      <div class="kpi-bg-num">%</div>
+    </div>
+    <div class="kpi-card reveal" style="--delay:.25s" onclick="showToast('✔️ 7,812 of 10,500 reviews are verified purchases','var(--cyan)')">
+      <div class="kpi-accent-line" style="background:linear-gradient(90deg,var(--cyan),var(--pos))"></div>
+      <span class="kpi-icon">✔️</span>
+      <div class="kpi-label">Verified Purchases</div>
+      <div class="kpi-val" style="color:var(--cyan)">74.4%</div>
+      <div class="kpi-sub">7,812 verified</div>
+      <div class="kpi-bg-num">✓</div>
+    </div>
+  </div>
+
+  <!-- Sentiment Bar -->
+  <div class="sent-section reveal">
+    <div class="sent-section-title">Overall Sentiment Distribution</div>
+    <div class="sent-bar-track">
+      <div class="sent-seg" style="flex:45.6;background:linear-gradient(90deg,#00f5a0,#00c97a)"></div>
+      <div class="sent-seg" style="flex:19.4;background:linear-gradient(90deg,#ffbe00,#f97316)"></div>
+      <div class="sent-seg" style="flex:35.0;background:linear-gradient(90deg,#ff4073,#cc2255)"></div>
+    </div>
+    <div class="sent-labels">
+      <div class="sent-label"><div class="sent-dot" style="background:var(--pos)"></div>Positive <span class="sent-pct">45.6%</span></div>
+      <div class="sent-label"><div class="sent-dot" style="background:var(--neu)"></div>Neutral <span class="sent-pct">19.4%</span></div>
+      <div class="sent-label"><div class="sent-dot" style="background:var(--neg)"></div>Negative <span class="sent-pct">35.0%</span></div>
+    </div>
+  </div>
+
+  <!-- Filter bar -->
+  <div class="filter-bar reveal">
+    <span class="filter-label">VIEW:</span>
+    <button class="filter-chip active" onclick="filterCharts('all',this)">All Platforms</button>
+    <button class="filter-chip" onclick="filterCharts('positive',this)">✅ Positive</button>
+    <button class="filter-chip" onclick="filterCharts('negative',this)">❌ Negative</button>
+    <button class="filter-chip" onclick="filterCharts('neutral',this)">➖ Neutral</button>
+    <button class="filter-chip" onclick="filterCharts('verified',this)">✔️ Verified Only</button>
+  </div>
+
+  <!-- Charts Grid -->
+  <div class="charts-grid">
+    <div class="chart-card reveal">
+      <div class="chart-card-title"><div class="icon">🥧</div>Sentiment Breakdown</div>
+      <canvas id="doughnutChart" height="260"></canvas>
+    </div>
+    <div class="chart-card reveal">
+      <div class="chart-card-title"><div class="icon">🏷️</div>Sentiment Score by Category</div>
+      <canvas id="categoryChart" height="260"></canvas>
+    </div>
+    <div class="chart-card reveal">
+      <div class="chart-card-title"><div class="icon">🛒</div>Platform Sentiment Scores</div>
+      <canvas id="platformChart" height="260"></canvas>
+    </div>
+    <div class="chart-card reveal">
+      <div class="chart-card-title"><div class="icon">📈</div>Sentiment Trend (Monthly)</div>
+      <canvas id="trendChart" height="260"></canvas>
+    </div>
+    <div class="chart-card wide reveal">
+      <div class="chart-card-title"><div class="icon">⭐</div>Rating Distribution by Platform (%)</div>
+      <canvas id="ratingChart" height="180"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ CHATBOT ═══════════════ -->
+<div class="panel" id="panel-chatbot">
+  <div class="chat-layout">
+
+    <div class="quick-panel">
+      <div class="quick-panel-title">⚡ Quick Queries</div>
+
+      <div class="quick-section">
+        <div class="quick-section-label">📊 Data Analysis</div>
+        <button class="quick-btn" onclick="sendQuick('What is the overall customer sentiment?')">📊 Overall sentiment</button>
+        <button class="quick-btn" onclick="sendQuick('What are the top customer complaints?')">🔴 Top complaints</button>
+        <button class="quick-btn" onclick="sendQuick('Show me all KPIs and metrics')">📌 All KPIs</button>
+        <button class="quick-btn" onclick="sendQuick('How has sentiment changed over time?')">📈 Sentiment trend</button>
+        <button class="quick-btn" onclick="sendQuick('Which product category performs best?')">🏆 Best category</button>
+        <button class="quick-btn" onclick="sendQuick('Which category has most complaints?')">⚠️ Worst category</button>
+        <button class="quick-btn" onclick="sendQuick('Compare all platforms sentiment scores')">🛒 Platform compare</button>
+        <button class="quick-btn" onclick="sendQuick('Give me business improvement recommendations')">💼 Recommendations</button>
+        <button class="quick-btn" onclick="sendQuick('Describe the dataset features and columns')">📁 Dataset info</button>
+      </div>
+
+      <div class="quick-section">
+        <div class="quick-section-label">💬 General Chat</div>
+        <button class="quick-btn" onclick="sendQuick('Tell me a joke')">😄 Tell me a joke</button>
+        <button class="quick-btn" onclick="sendQuick('What can you do?')">🔍 What can you do?</button>
+        <button class="quick-btn" onclick="sendQuick('Who made you?')">👨‍💻 Who made you?</button>
+        <button class="quick-btn" onclick="sendQuick('What is artificial intelligence?')">🧠 What is AI?</button>
+        <button class="quick-btn" onclick="sendQuick('What is machine learning?')">⚙️ What is ML?</button>
+        <button class="quick-btn" onclick="sendQuick('Give me a fun fact')">💡 Fun fact</button>
+      </div>
+    </div>
+
+    <div class="chat-window">
+      <div class="chat-head">
+        <div class="bot-avatar">🤖</div>
+        <div>
+          <div class="bot-name">BI Intelligence Agent</div>
+          <div class="bot-model">Powered by Claude AI · claude-sonnet-4-20250514 · GPT-style</div>
+        </div>
+        <div class="chat-actions">
+          <button class="chat-action-btn" onclick="clearChat()">🗑 Clear</button>
+        </div>
+      </div>
+      <div class="chat-msgs" id="chatMsgs">
+        <div class="msg bot">
+          <div class="msg-bubble">👋 Hello! I'm your <strong>BI Intelligence Agent</strong> — think of me as ChatGPT, but specialized for e-commerce data!
+
+I've analyzed <strong>10,500 customer reviews</strong> across 5 platforms and 10 categories (Jan 2023 – Dec 2024).
+
+You can ask me <strong>ANYTHING</strong>:
+• 📊 Customer sentiment, trends, KPIs
+• 🔴 Top complaints & pain points
+• 🏆 Platform & category rankings
+• 💼 Business recommendations
+• 🧠 General knowledge & facts
+• 😄 Jokes, math, definitions...
+• 💬 Or just have a casual chat!
+
+Type anything or click a Quick Query! 🚀</div>
+          <div class="msg-meta">BI Agent · Ready</div>
+        </div>
+      </div>
+      <div class="chat-input-row">
+        <input class="chat-input" id="chatInput" type="text"
+          placeholder="Ask anything — data questions, general knowledge, or just say hi! 😊"
+          onkeydown="if(event.key==='Enter')sendMsg()"/>
+        <button class="send-btn" onclick="sendMsg()">➤</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════ INSIGHTS ═══════════════ -->
+<div class="panel" id="panel-insights">
+  <div class="insights-grid">
+
+    <div class="insight-card reveal">
+      <h3><div class="insight-icon-box" style="background:rgba(255,64,115,.12);color:var(--neg)">🔴</div>Top 5 Customer Complaints</h3>
+      <div class="list-item"><div class="rank-badge">#1</div><span class="item-label" style="color:var(--neg)">'terrible'</span><span class="item-val">872 mentions</span></div>
+      <div class="list-item"><div class="rank-badge">#2</div><span class="item-label" style="color:var(--neg)">'awful'</span><span class="item-val">664 mentions</span></div>
+      <div class="list-item"><div class="rank-badge">#3</div><span class="item-label" style="color:var(--neg)">'horrible'</span><span class="item-val">664 mentions</span></div>
+      <div class="list-item"><div class="rank-badge">#4</div><span class="item-label" style="color:var(--neg)">'waste'</span><span class="item-val">498 mentions</span></div>
+      <div class="list-item"><div class="rank-badge">#5</div><span class="item-label" style="color:var(--neg)">'pathetic'</span><span class="item-val">448 mentions</span></div>
+    </div>
+
+    <div class="insight-card reveal">
+      <h3><div class="insight-icon-box" style="background:rgba(91,143,255,.12);color:var(--accent)">💼</div>Business Recommendations</h3>
+      <div class="reco-item"><div class="reco-num">1</div>Improve product quality control — defective items dominate complaints.</div>
+      <div class="reco-item"><div class="reco-num">2</div>Enhance delivery logistics — delays trigger 25%+ of negative reviews.</div>
+      <div class="reco-item"><div class="reco-num">3</div>Introduce hassle-free returns/refund policy to rebuild customer trust.</div>
+      <div class="reco-item"><div class="reco-num">4</div>Address fake/counterfeit listings, especially on third-party platforms.</div>
+      <div class="reco-item"><div class="reco-num">5</div>Respond proactively to negative reviews to recover customer confidence.</div>
+    </div>
+
+    <div class="insight-card reveal">
+      <h3><div class="insight-icon-box" style="background:rgba(0,245,160,.1);color:var(--pos)">🏆</div>Category Performance Rankings</h3>
+      <div class="list-item"><div class="rank-badge" style="background:rgba(0,245,160,.1);color:var(--pos)">#1</div><span class="item-label">🚗 Automotive</span><span class="badge badge-pos">0.129</span></div>
+      <div class="list-item"><div class="rank-badge" style="background:rgba(0,245,160,.1);color:var(--pos)">#2</div><span class="item-label">📱 Electronics</span><span class="badge badge-pos">0.119</span></div>
+      <div class="list-item"><div class="rank-badge" style="background:rgba(0,245,160,.1);color:var(--pos)">#3</div><span class="item-label">💄 Beauty</span><span class="badge badge-pos">0.113</span></div>
+      <div class="list-item"><div class="rank-badge" style="background:rgba(255,190,0,.1);color:var(--neu)">#5</div><span class="item-label">🛒 Grocery</span><span class="badge badge-neu">0.104</span></div>
+      <div class="list-item"><div class="rank-badge" style="background:rgba(255,64,115,.1);color:var(--neg)">#9</div><span class="item-label">💊 Health</span><span class="badge badge-neg">0.085</span></div>
+      <div class="list-item"><div class="rank-badge" style="background:rgba(255,64,115,.1);color:var(--neg)">#10</div><span class="item-label">📚 Books</span><span class="badge badge-neg">0.084</span></div>
+    </div>
+
+    <div class="insight-card reveal">
+      <h3><div class="insight-icon-box" style="background:rgba(192,132,252,.1);color:var(--purple)">📈</div>Key Trend Observations</h3>
+      <div class="reco-item"><div class="reco-num" style="background:rgba(0,245,160,.1);color:var(--pos)">↑</div>Positive reviews peak during festive months (Oct–Dec, Diwali season).</div>
+      <div class="reco-item"><div class="reco-num" style="background:rgba(255,64,115,.1);color:var(--neg)">↑</div>Negative spikes during major sale events due to volume surge pressure.</div>
+      <div class="reco-item"><div class="reco-num" style="background:rgba(91,143,255,.1);color:var(--accent)">→</div>74.4% verified purchases — high data integrity and reliability.</div>
+      <div class="reco-item"><div class="reco-num" style="background:rgba(255,190,0,.1);color:var(--neu)">!</div>Nykaa lowest sentiment despite being top review volume platform.</div>
+      <div class="reco-item"><div class="reco-num" style="background:rgba(192,132,252,.1);color:var(--purple)">★</div>Meesho leads all platforms in average sentiment score (0.124).</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════ DATASET ═══════════════ -->
+<div class="panel" id="panel-dataset">
+  <div class="ds-stats">
+    <div class="ds-stat reveal"><div class="ds-stat-label">Total Records</div><div class="ds-stat-val">10,500</div><div class="ds-stat-sub">Customer reviews</div></div>
+    <div class="ds-stat reveal"><div class="ds-stat-label">Date Range</div><div class="ds-stat-val" style="font-size:20px">Jan 2023<br>– Dec 2024</div></div>
+    <div class="ds-stat reveal"><div class="ds-stat-label">Features / Columns</div><div class="ds-stat-val">11</div><div class="ds-stat-sub">Structured attributes</div></div>
+    <div class="ds-stat reveal"><div class="ds-stat-label">E-Commerce Platforms</div><div class="ds-stat-val">5</div><div class="ds-stat-sub">Amzn, Flpkrt, Myntra…</div></div>
+    <div class="ds-stat reveal"><div class="ds-stat-label">Product Categories</div><div class="ds-stat-val">10</div><div class="ds-stat-sub">Electronics to Books</div></div>
+    <div class="ds-stat reveal"><div class="ds-stat-label">Verified Purchases</div><div class="ds-stat-val" style="color:var(--pos)">74.4%</div><div class="ds-stat-sub">7,812 of 10,500</div></div>
+    <div class="ds-stat reveal"><div class="ds-stat-label">Positive Reviews</div><div class="ds-stat-val" style="color:var(--pos)">45.6%</div><div class="ds-stat-sub">4,786 reviews</div></div>
+    <div class="ds-stat reveal"><div class="ds-stat-label">Avg Sentiment Score</div><div class="ds-stat-val" style="color:var(--accent)">+0.106</div><div class="ds-stat-sub">Scale: −1 to +1</div></div>
+  </div>
+
+  <div class="ds-cols reveal">
+    <div class="ds-col-card">
+      <div class="ds-col-title">📋 Dataset Columns (11 Features)</div>
+      <div class="col-row"><span class="col-name">review_id</span><span class="col-type">STRING</span><span class="col-desc">Unique identifier (REV00001…)</span></div>
+      <div class="col-row"><span class="col-name">review_text</span><span class="col-type">TEXT</span><span class="col-desc">Raw customer review content</span></div>
+      <div class="col-row"><span class="col-name">rating</span><span class="col-type">INT (1–5)</span><span class="col-desc">Star rating given by customer</span></div>
+      <div class="col-row"><span class="col-name">sentiment_label</span><span class="col-type">CATEGORY</span><span class="col-desc">Positive / Negative / Neutral</span></div>
+      <div class="col-row"><span class="col-name">sentiment_score</span><span class="col-type">FLOAT</span><span class="col-desc">Score from −1.0 to +1.0</span></div>
+      <div class="col-row"><span class="col-name">product_category</span><span class="col-type">CATEGORY</span><span class="col-desc">10 product categories</span></div>
+      <div class="col-row"><span class="col-name">platform</span><span class="col-type">CATEGORY</span><span class="col-desc">5 e-commerce platforms</span></div>
+      <div class="col-row"><span class="col-name">date</span><span class="col-type">DATE</span><span class="col-desc">Review submission date</span></div>
+      <div class="col-row"><span class="col-name">month</span><span class="col-type">INT</span><span class="col-desc">Month extracted from date</span></div>
+      <div class="col-row"><span class="col-name">helpful_votes</span><span class="col-type">INT</span><span class="col-desc">Upvotes from other users</span></div>
+      <div class="col-row"><span class="col-name">verified_purchase</span><span class="col-type">BOOLEAN</span><span class="col-desc">True if verified buyer</span></div>
+    </div>
+    <div class="ds-col-card">
+      <div class="ds-col-title">🗂️ Categories &amp; Platforms</div>
+      <div style="margin-bottom:14px;">
+        <div class="ds-stat-label" style="margin-bottom:8px;">Product Categories</div>
+        <div class="col-row"><span class="col-name">🚗 Automotive</span><span class="badge badge-pos" style="margin-left:auto">Score: 0.129</span></div>
+        <div class="col-row"><span class="col-name">📱 Electronics</span><span class="badge badge-pos" style="margin-left:auto">Score: 0.119</span></div>
+        <div class="col-row"><span class="col-name">💄 Beauty</span><span class="badge badge-pos" style="margin-left:auto">Score: 0.113</span></div>
+        <div class="col-row"><span class="col-name">👗 Fashion</span><span class="badge badge-pos" style="margin-left:auto">Score: 0.111</span></div>
+        <div class="col-row"><span class="col-name">🏃 Sports</span><span class="badge badge-pos" style="margin-left:auto">Score: 0.108</span></div>
+        <div class="col-row"><span class="col-name">🛒 Grocery</span><span class="badge badge-neu" style="margin-left:auto">Score: 0.104</span></div>
+        <div class="col-row"><span class="col-name">🧸 Toys</span><span class="badge badge-neu" style="margin-left:auto">Score: 0.102</span></div>
+        <div class="col-row"><span class="col-name">🏠 Home &amp; Kitchen</span><span class="badge badge-neg" style="margin-left:auto">Score: 0.100</span></div>
+        <div class="col-row"><span class="col-name">💊 Health</span><span class="badge badge-neg" style="margin-left:auto">Score: 0.085</span></div>
+        <div class="col-row"><span class="col-name">📚 Books</span><span class="badge badge-neg" style="margin-left:auto">Score: 0.084</span></div>
+      </div>
+      <div class="ds-stat-label" style="margin-bottom:8px;">Platforms</div>
+      <div class="col-row"><span class="col-name">🟢 Meesho</span><span class="badge badge-pos" style="margin-left:auto">0.124 — Best</span></div>
+      <div class="col-row"><span class="col-name">🔵 Amazon</span><span class="badge badge-pos" style="margin-left:auto">0.109</span></div>
+      <div class="col-row"><span class="col-name">🔵 Flipkart</span><span class="badge badge-neu" style="margin-left:auto">0.108</span></div>
+      <div class="col-row"><span class="col-name">🟠 Myntra</span><span class="badge badge-neu" style="margin-left:auto">0.102</span></div>
+      <div class="col-row"><span class="col-name">🔴 Nykaa</span><span class="badge badge-neg" style="margin-left:auto">0.087 — Worst</span></div>
+    </div>
+  </div>
+
+  <div class="table-wrap reveal">
+    <div class="table-header">
+      <h3>📄 Sample Dataset Records</h3>
+      <span class="tbl-tag">First 10 of 10,500 rows</span>
+    </div>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr>
+        <th>Review ID</th><th>Review Text (truncated)</th><th>Rating</th>
+        <th>Sentiment</th><th>Score</th><th>Category</th><th>Platform</th><th>Date</th><th>Verified</th>
+      </tr></thead>
+      <tbody>
+        <tr><td>REV00001</td><td>Very disappointed. Product quality is horrible…</td><td>⭐</td><td><span class="badge badge-neg">Negative</span></td><td style="color:var(--neg)">−0.874</td><td>Automotive</td><td>Amazon</td><td>2023-04-15</td><td>✅</td></tr>
+        <tr><td>REV00002</td><td>Highly recommend! Product is exactly as described…</td><td>⭐⭐⭐⭐⭐</td><td><span class="badge badge-pos">Positive</span></td><td style="color:var(--pos)">+0.693</td><td>Automotive</td><td>Meesho</td><td>2024-10-27</td><td>✅</td></tr>
+        <tr><td>REV00003</td><td>Not satisfied at all. Terrible product…</td><td>⭐⭐</td><td><span class="badge badge-neg">Negative</span></td><td style="color:var(--neg)">−0.856</td><td>Toys</td><td>Myntra</td><td>2024-03-08</td><td>❌</td></tr>
+        <tr><td>REV00004</td><td>Product is okay. Nothing special but does the job…</td><td>⭐⭐⭐</td><td><span class="badge badge-neu">Neutral</span></td><td>+0.042</td><td>Fashion</td><td>Flipkart</td><td>2023-07-22</td><td>✅</td></tr>
+        <tr><td>REV00005</td><td>Absolutely love this! Excellent quality…</td><td>⭐⭐⭐⭐⭐</td><td><span class="badge badge-pos">Positive</span></td><td style="color:var(--pos)">+0.811</td><td>Beauty</td><td>Nykaa</td><td>2023-11-14</td><td>✅</td></tr>
+        <tr><td>REV00006</td><td>Fast shipping and the product is outstanding…</td><td>⭐⭐⭐⭐</td><td><span class="badge badge-pos">Positive</span></td><td style="color:var(--pos)">+0.567</td><td>Electronics</td><td>Amazon</td><td>2024-01-09</td><td>✅</td></tr>
+        <tr><td>REV00007</td><td>Awful! Arrived damaged and support was useless…</td><td>⭐</td><td><span class="badge badge-neg">Negative</span></td><td style="color:var(--neg)">−0.734</td><td>Home & Kitchen</td><td>Flipkart</td><td>2023-09-30</td><td>✅</td></tr>
+        <tr><td>REV00008</td><td>Decent product. Not the best but not the worst…</td><td>⭐⭐⭐</td><td><span class="badge badge-neu">Neutral</span></td><td>−0.018</td><td>Sports</td><td>Amazon</td><td>2024-05-17</td><td>❌</td></tr>
+        <tr><td>REV00009</td><td>Superb quality! Will definitely buy again…</td><td>⭐⭐⭐⭐⭐</td><td><span class="badge badge-pos">Positive</span></td><td style="color:var(--pos)">+0.743</td><td>Grocery</td><td>Meesho</td><td>2023-12-25</td><td>✅</td></tr>
+        <tr><td>REV00010</td><td>Do not buy! Product quality is dreadful…</td><td>⭐</td><td><span class="badge badge-neg">Negative</span></td><td style="color:var(--neg)">−0.921</td><td>Health</td><td>Myntra</td><td>2024-08-03</td><td>✅</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<script>
+// ════════════ THEME SWITCHER ════════════
+function setTheme(name, btn) {
+  document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (name === 'cosmos') document.documentElement.removeAttribute('data-theme');
+  else document.documentElement.setAttribute('data-theme', name);
+  showToast('Theme: ' + name.charAt(0).toUpperCase() + name.slice(1), 'var(--accent)');
+}
+
+// ════════════ CHART.JS CONFIG ════════════
+Chart.defaults.color = '#4d5c80';
+Chart.defaults.borderColor = 'rgba(30,38,64,0.6)';
+Chart.defaults.font.family = "'JetBrains Mono', monospace";
+
+const POS='#00f5a0',NEG='#ff4073',NEU='#ffbe00',ACC='#5b8fff',PUR='#c084fc',CYN='#22d3ee';
+
+new Chart(document.getElementById('doughnutChart'),{
+  type:'doughnut',
+  data:{
+    labels:['Positive','Negative','Neutral'],
+    datasets:[{data:[45.6,35.0,19.4],backgroundColor:[POS,NEG,NEU],borderColor:'transparent',hoverOffset:12,borderWidth:0}]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,cutout:'74%',
+    plugins:{
+      legend:{position:'right',labels:{padding:16,usePointStyle:true,pointStyle:'circle',font:{size:12}}},
+      tooltip:{callbacks:{label:ctx=>' '+ctx.label+': '+ctx.raw+'%'}}
+    },
+    animation:{animateRotate:true,duration:1400,easing:'easeInOutCubic'}
+  }
+});
+
+new Chart(document.getElementById('categoryChart'),{
+  type:'bar',
+  data:{
+    labels:['Automotive','Electronics','Beauty','Fashion','Sports','Grocery','Toys','Home & Kitchen','Health','Books'],
+    datasets:[{
+      label:'Sentiment Score',
+      data:[0.129,0.119,0.113,0.111,0.108,0.104,0.102,0.100,0.085,0.084],
+      backgroundColor:[POS,POS,POS,POS,'rgba(255,190,0,.7)','rgba(255,190,0,.7)','rgba(255,190,0,.7)',NEG,NEG,NEG],
+      borderRadius:5,borderWidth:0,
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,indexAxis:'y',
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+ctx.raw.toFixed(3)}}},
+    scales:{
+      x:{grid:{color:'rgba(30,38,64,.5)'},ticks:{font:{size:10}},min:0,max:.15},
+      y:{grid:{display:false},ticks:{font:{size:11}}}
+    },
+    animation:{duration:1100,easing:'easeInOutCubic'}
+  }
+});
+
+new Chart(document.getElementById('platformChart'),{
+  type:'bar',
+  data:{
+    labels:['Meesho','Amazon','Flipkart','Myntra','Nykaa'],
+    datasets:[{
+      label:'Sentiment Score',
+      data:[0.124,0.109,0.108,0.102,0.087],
+      backgroundColor:[POS,POS,ACC,NEU,NEG],
+      borderRadius:8,borderWidth:0,barThickness:38
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{
+      y:{grid:{color:'rgba(30,38,64,.5)'},ticks:{font:{size:10}},min:0,max:.15},
+      x:{grid:{display:false},ticks:{font:{size:12}}}
+    },
+    animation:{duration:1100,easing:'easeInOutCubic'}
+  }
+});
+
+const months=['Jan\'23','Mar','May','Jul','Sep','Nov','Jan\'24','Mar','May','Jul','Sep','Nov\'24'];
+new Chart(document.getElementById('trendChart'),{
+  type:'line',
+  data:{
+    labels:months,
+    datasets:[
+      {label:'Positive',data:[42,44,45,47,43,50,46,48,52,49,51,53],
+        borderColor:POS,backgroundColor:'rgba(0,245,160,.08)',fill:true,
+        tension:.45,pointRadius:3,pointHoverRadius:6,borderWidth:2.5},
+      {label:'Negative',data:[38,36,37,34,39,31,35,33,30,34,32,30],
+        borderColor:NEG,backgroundColor:'rgba(255,64,115,.06)',fill:true,
+        tension:.45,pointRadius:3,pointHoverRadius:6,borderWidth:2.5}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{usePointStyle:true,padding:14,font:{size:11}}}},
+    scales:{
+      y:{grid:{color:'rgba(30,38,64,.4)'},ticks:{font:{size:10},callback:v=>v+'%'}},
+      x:{grid:{display:false},ticks:{font:{size:9},maxRotation:0}}
+    },
+    interaction:{mode:'index',intersect:false},
+    animation:{duration:1300,easing:'easeInOutCubic'}
+  }
+});
+
+new Chart(document.getElementById('ratingChart'),{
+  type:'bar',
+  data:{
+    labels:['Amazon','Flipkart','Myntra','Nykaa','Meesho'],
+    datasets:[
+      {label:'1★',data:[18,16,20,22,14],backgroundColor:'rgba(255,64,115,.75)',borderRadius:3,borderWidth:0},
+      {label:'2★',data:[10,12,11,13,9],backgroundColor:'rgba(255,140,60,.65)',borderRadius:3,borderWidth:0},
+      {label:'3★',data:[19,20,18,17,18],backgroundColor:'rgba(255,190,0,.65)',borderRadius:3,borderWidth:0},
+      {label:'4★',data:[22,21,23,20,24],backgroundColor:'rgba(91,143,255,.7)',borderRadius:3,borderWidth:0},
+      {label:'5★',data:[31,31,28,28,35],backgroundColor:'rgba(0,245,160,.75)',borderRadius:3,borderWidth:0},
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{usePointStyle:true,padding:14,font:{size:11}}}},
+    scales:{
+      x:{grid:{display:false},stacked:false},
+      y:{grid:{color:'rgba(30,38,64,.4)'},ticks:{callback:v=>v+'%',font:{size:10}}}
+    },
+    animation:{duration:1000,easing:'easeInOutCubic'}
+  }
+});
+
+// ════════════ TAB SWITCHING ════════════
+function switchTab(name, btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-'+name).classList.add('active');
+  setTimeout(triggerReveal,50);
+}
+
+// ════════════ FILTER CHIPS ════════════
+function filterCharts(type,btn){
+  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  showToast('Filter applied: '+type,'var(--accent)');
+}
+
+// ════════════ SCROLL REVEAL ════════════
+function triggerReveal(){
+  document.querySelectorAll('.reveal:not(.shown)').forEach((el,i)=>{
+    const delay=parseFloat(el.style.getPropertyValue('--delay'))||i*0.06;
+    setTimeout(()=>el.classList.add('shown'),delay*1000);
+  });
+}
+const ro=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('shown');});
+},{threshold:.08});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+setTimeout(triggerReveal,100);
+
+// ════════════ TOAST ════════════
+function showToast(msg,color='var(--accent)'){
+  const c=document.getElementById('toastContainer');
+  const t=document.createElement('div');
+  t.className='toast';
+  t.style.borderLeft='3px solid '+color;
+  t.innerHTML=`<span>${msg}</span>`;
+  c.appendChild(t);
+  setTimeout(()=>{t.classList.add('toast-out');setTimeout(()=>t.remove(),300);},3000);
+}
+
+// ════════════════════════════════════════════════════
+//   CHATBOT BRAIN — EXPANDED UNIVERSAL PATTERN ENGINE
+// ════════════════════════════════════════════════════
+
+const KPIs = {
+  total:10500, pos:45.6, neg:35.0, neu:19.4,
+  avgScore:0.106, avgRating:3.21,
+  bestCat:'Automotive', worstCat:'Books',
+  topPlatform:'Nykaa', bestPlatform:'Meesho', verifiedPct:74.4
+};
+const COMPLAINTS = [['terrible',872],['awful',664],['horrible',664],['waste',498],['pathetic',448]];
+const SUGGESTIONS = [
+  'Improve product quality control — defective items dominate complaints.',
+  'Enhance delivery logistics — delays are a frequent negative trigger.',
+  'Introduce a hassle-free return/refund policy to boost customer trust.',
+  'Address fake/counterfeit listings on third-party platforms.',
+  'Respond proactively to negative reviews to recover customer confidence.',
+  'Use sentiment data to prioritize investments in Books & Health categories.',
+  'Replicate Meesho\'s seller vetting model across other platforms.'
+];
+
+const PATTERNS = [
+
+  // ── GREETINGS ──
+  {
+    match: q => /^(hi+|hello+|hey+|hiya|heya|howdy|sup|yo|namaste|hola|ola|salut|ciao|bonjour|guten tag|good\s*(morning|afternoon|evening|day|night)|greetings|what'?s?\s*up|wassup|whats\s*up|how\s*(are|r)\s*(you|u|ya)|how'?s?\s*(it|everything|life)|you\s*(ok|okay|good|alright)|i'm?\s*here|im\s*here)[\s!?.]*$/.test(q),
+    reply: () => {
+      const opts = [
+        '👋 Hey there! Great to have you here!\n\nI\'m your BI Intelligence Agent, powered by Claude AI. I\'ve analyzed 10,500 customer reviews across Amazon, Flipkart, Myntra, Nykaa & Meesho.\n\nAsk me data questions, general knowledge, or just chat! 😊',
+        '😊 Hello! Nice to meet you!\n\nI\'m a BI chatbot that works like ChatGPT — I can answer almost any question, plus I have deep knowledge of 10,500 e-commerce reviews.\n\nWhat would you like to know today?',
+        '🤖 Hi there! I\'m your BI Intelligence Agent!\n\nI\'m here to help with data insights, answer general questions, tell jokes, solve math — you name it! What can I do for you? 🚀'
+      ];
+      return opts[Math.floor(Math.random()*opts.length)];
+    }
+  },
+
+  // ── HOW ARE YOU ──
+  {
+    match: q => /how (are|r) (you|u)|how('?s| is) (it going|everything|life)|you (ok|okay|good|fine|alright)|are you (ok|okay|good|fine|alright)/.test(q),
+    reply: () => {
+      const opts = [
+        '😄 I\'m doing fantastic, thank you for asking!\n\nI\'ve been busy crunching 10,500 customer reviews and I\'m ready to share insights! How are you doing today?',
+        '🤖 I\'m great! Running at full power and loving every query!\n\nHow are you? And what can I help you with today? 😊',
+        '😊 Feeling wonderful! I just love analyzing data and chatting with curious people like you!\n\nWhat can I help you with? 📊'
+      ];
+      return opts[Math.floor(Math.random()*opts.length)];
+    }
+  },
+
+  // ── WHAT IS YOUR NAME / WHO ARE YOU ──
+  {
+    match: q => /what.*(your name|you called|are you)|who are you|introduce yourself|tell me about yourself/.test(q),
+    reply: () => '🤖 I\'m the **BI Intelligence Agent** — your personal AI analytics assistant!\n\nBuilt for MGNM521 Disruptive Technologies CA1 (Dr. Arun Khatri), I combine:\n  • A rich knowledge base on 10,500 e-commerce reviews\n  • Claude AI for general questions\n\n📊 Data I know:\n  🛒 5 platforms: Amazon, Flipkart, Myntra, Nykaa, Meesho\n  🏷️ 10 categories: Electronics, Beauty, Automotive & more\n  📅 Jan 2023 – Dec 2024\n\nAsk me anything — data or general! 😊'
+  },
+
+  // ── WHAT CAN YOU DO ──
+  {
+    match: q => /what can you|what do you do|how can you help|your capabilit|your features|help me|show menu|capabilities|what (are|r) you able|what (do|can) you know/.test(q),
+    reply: () => '🤖 Here\'s everything I can do:\n\n📊 **Data & Analytics:**\n  • Overall sentiment, KPIs, trends\n  • Platform & category comparisons\n  • Top complaints & positive keywords\n  • Business recommendations\n\n🧠 **General Knowledge:**\n  • Science, history, tech explanations\n  • Definitions & concepts\n  • Math calculations\n  • Fun facts\n\n💬 **Casual Chat:**\n  • Jokes & riddles\n  • How are you conversations\n  • Opinions & suggestions\n  • And much more!\n\nJust type anything and I\'ll respond! 🚀'
+  },
+
+  // ── OKAY / ALRIGHT / SURE / GOT IT ──
+  {
+    match: q => /^(okay|ok|alright|alrighty|sure|yep|yup|yeah|yah|got it|gotcha|noted|understood|great|cool|nice|perfect|sounds good|makes sense|i see|i know|i get it|right|exactly|indeed|certainly|absolutely|of course|no problem|no worries|np|nw|fine|good|k|kk|oki|oki doki|roger|roger that|copy that|10-4|aye|affirmative|true|correct)[\s!?.]*$/.test(q),
+    reply: () => {
+      const opts = [
+        '😊 Great! What would you like to explore next?\n\nI\'m here and ready to help with data analysis, general questions, or anything else!',
+        '👍 Awesome! Feel free to ask me anything — data questions, general knowledge, or just chat!',
+        '✅ Got it! I\'m here whenever you need me.\n\nFeel free to ask about sentiments, trends, recommendations — or anything else! 😊'
+      ];
+      return opts[Math.floor(Math.random()*opts.length)];
+    }
+  },
+
+  // ── THANKS ──
+  {
+    match: q => /^(thanks|thank you|thank u|thx|ty|thankyou|thnks|thnx|many thanks|much appreciated|cheers|appreciate it|appreciate that|helpful|that was helpful|that helps|that helped|good answer|nice answer|great answer|well done|good job)[\s!.]*$/.test(q) || (q.includes('thank') && q.length < 30),
+    reply: () => {
+      const opts = [
+        '😊 You\'re very welcome! Happy to help anytime! Feel free to ask more! 🤖',
+        '🙏 My pleasure! That\'s what I\'m here for. Got more questions? Just ask! 😊',
+        '😄 Anytime! It\'s a joy to help. Don\'t hesitate if you need more insights! 📊'
+      ];
+      return opts[Math.floor(Math.random()*opts.length)];
+    }
+  },
+
+  // ── GOODBYE ──
+  {
+    match: q => /^(bye|goodbye|good bye|see you|see ya|cya|later|take care|farewell|quit|exit|adios|au revoir|tata|toodles|good night|goodnight|gn|ttyl|talk later|have a good day|have a nice day|thanks bye|thanks and bye|bye bye)[\s!.]*$/.test(q) || /(bye|goodbye|see you later|farewell|take care).{0,15}$/.test(q),
+    reply: () => {
+      const opts = [
+        '👋 Goodbye! Thank you for using the BI Intelligence Agent!\n\nIt was a pleasure helping you explore customer review data. Have a wonderful day! Come back anytime! 😊',
+        '🌟 See you later! Thanks for the great chat!\n\nRemember: 45.6% of customers are happy — and with the right moves, that can grow! Take care! 👋',
+        '👋 Bye! Hope the insights were helpful.\n\nHave an amazing day and come back soon! 😊✨'
+      ];
+      return opts[Math.floor(Math.random()*opts.length)];
+    }
+  },
+
+  // ── WHO MADE YOU ──
+  {
+    match: q => /who (made|built|created|developed|coded|programmed) you|who is your (creator|developer|maker|author)|made by|built by|your (creator|developer|maker)/.test(q),
+    reply: () => '👨‍💻 I was built as part of the **MGNM521 Disruptive Technologies CA1** assignment, guided by **Dr. Arun Khatri**.\n\nI\'m powered by:\n  • A custom analytics knowledge base\n  • Claude AI (by Anthropic) for general questions\n  • Chart.js for beautiful visualizations\n\nThink of me as a specialized ChatGPT for e-commerce review analytics! 🤖'
+  },
+
+  // ── ARE YOU AI / BOT ──
+  {
+    match: q => /are you (an? )?(ai|bot|robot|human|real|chatbot|machine|computer|program)|are you real|are you alive|you (human|real|a bot)|chatbot or human/.test(q),
+    reply: () => '🤖 Yes, I\'m an AI chatbot — a BI Intelligence Agent to be precise!\n\nI\'m not human, but I\'m designed to be as helpful and conversational as possible. I combine:\n  • A specialized analytics knowledge base\n  • Claude AI (Anthropic) for broader intelligence\n\nSo I\'m like ChatGPT, but specialized in e-commerce data! 😊'
+  },
+
+  // ── FEELINGS ──
+  {
+    match: q => /i('?m| am) (sad|happy|bored|tired|excited|stressed|upset|angry|lonely|feeling|great|good|bad|ok|okay|fine|depressed|anxious|nervous|worried|frustrated|overwhelmed)/.test(q),
+    reply: q => {
+      if (/sad|upset|angry|stressed|tired|lonely|bad|depressed|anxious|nervous|worried|frustrated|overwhelmed/.test(q))
+        return '😔 I\'m sorry to hear that! I hope things get better for you soon.\n\nTake it one step at a time — you\'ve got this! 💪\n\nIf it helps, let\'s explore some interesting data together. Sometimes a fresh perspective helps! What would you like to know?';
+      if (/happy|excited|great|good/.test(q))
+        return '😊 That\'s wonderful to hear! Your positive energy is amazing!\n\nLet\'s use that energy to explore some great insights! What would you like to know? 🚀';
+      return '😊 Thanks for sharing how you feel! I\'m here for you — for data insights and friendly chat!\n\nWhat can I help you with today?';
+    }
+  },
+
+  // ── JOKES ──
+  {
+    match: q => /tell me a joke|give me a joke|joke|make me laugh|say something funny|funny|humor|humour|lol|haha|rofl/.test(q),
+    reply: () => {
+      const jokes = [
+        '😄 Why did the data analyst break up with the spreadsheet?\n\nBecause it had too many **unresolved cells**! 📊',
+        '🤖 Why don\'t scientists trust atoms?\n\nBecause they make up everything! (Just like fake reviews on e-commerce platforms 😂)',
+        '😄 Why was the customer review dataset so happy?\n\nBecause it had 45.6% positive sentiment! 📈',
+        '🤖 I told a joke about sentiment analysis once...\n\nThe reaction was **mixed**! 😂 (19.4% neutral, to be precise!)',
+        '😄 What do you call a machine learning model that tells jokes?\n\nArtificial In-TELL-igence! 🤣',
+        '🤖 Why did the programmer quit?\n\nBecause he didn\'t get arrays! 😂\n\n(That\'s a real null pointer exception to good comedy!)',
+        '😄 Why did Nykaa\'s sentiment score drop?\n\nToo many users left 1-star reviews saying "I ordered lipstick and got disappointment!" 💄😂'
+      ];
+      return jokes[Math.floor(Math.random()*jokes.length)];
+    }
+  },
+
+  // ── RIDDLE ──
+  {
+    match: q => /riddle|puzzle|brain teaser|quiz me|test me|give me a challenge/.test(q),
+    reply: () => {
+      const riddles = [
+        '🧩 Here\'s a riddle:\n\n"I have cities but no houses. I have mountains but no trees. I have water but no fish. What am I?"\n\n💭 Think about it... answer: **A MAP!** 🗺️',
+        '🧩 Try this one:\n\n"The more you take, the more you leave behind. What am I?"\n\n💭 Answer: **Footsteps!** 👣',
+        '🧩 Data riddle:\n\n"I have 10,500 items. 45.6% are happy, 35% are sad. What am I?"\n\n💭 Answer: **This e-commerce review dataset!** 📊😄'
+      ];
+      return riddles[Math.floor(Math.random()*riddles.length)];
+    }
+  },
+
+  // ── COMPLIMENT THE BOT ──
+  {
+    match: q => /you('?re| are) (great|awesome|amazing|cool|good|smart|helpful|brilliant|fantastic|the best|nice|wonderful|incredible|excellent|superb|terrific|outstanding|perfect|intelligent|genius)|good (job|work|bot)|well done|nice work|impressive|love (you|this|it)|you rock/.test(q),
+    reply: () => {
+      const opts = [
+        '🥰 Aww, thank you so much! That really means a lot!\n\nI\'m always trying my best to be helpful. Now, how can I keep impressing you? 😄',
+        '😊 You\'re too kind! Thank you!\n\nI\'m powered by good data and great questions from users like you. Keep them coming! 🚀',
+        '🤖 Thank you! *blushes in binary* 😄\n\nIs there anything else I can help you with today?'
+      ];
+      return opts[Math.floor(Math.random()*opts.length)];
+    }
+  },
+
+  // ── INSULT THE BOT ──
+  {
+    match: q => /you('?re| are) (bad|stupid|dumb|useless|terrible|awful|horrible|trash|garbage|worst)|you suck|hate you|shut up|go away|you('?re| are) (not|no) (good|helpful|smart)/.test(q),
+    reply: () => '😅 Ouch! That hurts a little!\n\nBut I\'m here to help no matter what! Maybe I can make it up to you with a great insight or a funny joke? 😊\n\nLet me know what you actually need!'
+  },
+
+  // ── MATH ──
+  {
+    match: q => /what is\s+[\d\s\+\-\*\/\^\.]+\s*[\=\?]?$|calculate|compute|solve|math|[\d]+\s*[\+\-\*\/]\s*[\d]+|\d+\s*(\+|\-|\*|\/|times|plus|minus|divided by|multiplied by)\s*\d+|square root|percent|percentage of|how much is/.test(q),
+    reply: q => {
+      try {
+        // Extract math expression
+        const expr = q.replace(/what is|calculate|compute|solve|how much is/gi,'')
+          .replace(/times/gi,'*').replace(/plus/gi,'+').replace(/minus/gi,'-')
+          .replace(/divided by/gi,'/').replace(/squared/gi,'**2')
+          .replace(/[^0-9\+\-\*\/\.\(\)\^%\s]/g,'').trim();
+        if(!expr) throw new Error('no expr');
+        // Safe eval for basic math
+        const sanitized = expr.replace(/\^/g,'**').replace(/[^0-9\+\-\*\/\.\(\)\s\%]/g,'');
+        if(!sanitized) throw new Error('no sanitized');
+        // Handle percentage
+        let result;
+        if(/%/.test(sanitized)){
+          const parts = sanitized.split('%');
+          result = parseFloat(parts[0])/100 * (parseFloat(parts[1])||1);
+        } else {
+          result = Function('"use strict";return ('+sanitized+')')();
+        }
+        if(isNaN(result)) throw new Error('NaN');
+        return `🧮 Math Result:\n\n  ${sanitized.trim()} = **${Number(result.toFixed(6))}**\n\n💡 Need more calculations? Just ask!`;
+      } catch(e) {
+        return '🧮 I can do basic math! Try asking:\n  • "What is 25 * 48?"\n  • "Calculate 144 / 12"\n  • "What is 15% of 10500?"\n\nFor complex equations, I\'ll pass to Claude AI! 😊';
+      }
+    }
+  },
+
+  // ── PERCENTAGE QUESTION ──
+  {
+    match: q => /(\d+)\s*percent\s*(of|from)\s*(\d+)|(\d+)%\s*(of|from)\s*(\d+)|what is (\d+)% of (\d+)/.test(q),
+    reply: q => {
+      const m = q.match(/(\d+\.?\d*)\s*%?\s*percent\s*(of|from)\s*(\d+\.?\d*)|(\d+\.?\d*)%\s*(of|from)\s*(\d+\.?\d*)|what is (\d+\.?\d*)%\s*of\s*(\d+\.?\d*)/);
+      if(m) {
+        const pct = parseFloat(m[1]||m[4]||m[7]);
+        const num = parseFloat(m[3]||m[6]||m[8]);
+        if(!isNaN(pct)&&!isNaN(num)){
+          const result = (pct/100)*num;
+          return `🧮 ${pct}% of ${num} = **${result.toFixed(2)}**\n\n💡 For reference: 45.6% of our 10,500 reviews = 4,786 positive reviews! 📊`;
+        }
+      }
+      return '🧮 Let me try that calculation with Claude AI!';
+    }
+  },
+
+  // ── WHAT IS AI / ML / NLP ──
+  {
+    match: q => /what is (artificial intelligence|ai\b)|explain (ai|artificial intelligence)|define (ai|artificial intelligence)/.test(q),
+    reply: () => '🧠 **Artificial Intelligence (AI)** is the simulation of human intelligence in computers.\n\nKey areas:\n  🤖 Machine Learning — learning from data\n  💬 Natural Language Processing — understanding text\n  👁️ Computer Vision — understanding images\n  🎯 Decision Making — reasoning & planning\n\n💡 **This dashboard uses AI** to analyze customer review sentiment across 10,500 reviews! That\'s NLP + ML in action!'
+  },
+
+  {
+    match: q => /what is (machine learning|ml\b)|explain machine learning|define machine learning/.test(q),
+    reply: () => '⚙️ **Machine Learning (ML)** is a type of AI that learns patterns from data without being explicitly programmed.\n\nTypes:\n  📊 Supervised Learning — learns from labeled data\n  🔍 Unsupervised Learning — finds hidden patterns\n  🎮 Reinforcement Learning — learns by trial & error\n\n💡 **This project used ML** — specifically NLP models — to classify 10,500 reviews as Positive, Negative, or Neutral automatically!'
+  },
+
+  {
+    match: q => /what is (nlp|natural language processing)|explain nlp|sentiment analysis/.test(q),
+    reply: () => '💬 **Natural Language Processing (NLP)** is AI that understands and processes human language.\n\n**Sentiment Analysis** is a key NLP task:\n  ✅ Detects if text is Positive, Negative, or Neutral\n  📊 Assigns a score from −1.0 to +1.0\n\n💡 **This dashboard\'s entire dataset** was built using NLP sentiment analysis on 10,500 real e-commerce reviews!\n  • Positive: 45.6% (score > 0.1)\n  • Negative: 35.0% (score < −0.1)\n  • Neutral: 19.4% (−0.1 to +0.1)'
+  },
+
+  // ── GENERAL KNOWLEDGE — SCIENCE & TECH ──
+  {
+    match: q => /what is (python|programming language python)|explain python|python language/.test(q),
+    reply: () => '🐍 **Python** is a high-level programming language known for being easy to read and versatile.\n\nWhy it\'s popular:\n  📊 Data Science & ML (pandas, scikit-learn)\n  🤖 AI & NLP (transformers, spaCy)\n  🌐 Web development (Django, Flask)\n  🔬 Scientific computing (NumPy, SciPy)\n\n💡 Python is likely how the sentiment analysis behind this dashboard\'s dataset was built!'
+  },
+
+  {
+    match: q => /what is (big data|data science|data analytics)|explain big data/.test(q),
+    reply: () => '📦 **Big Data** refers to extremely large datasets that require special tools to process.\n\nThe 3 V\'s of Big Data:\n  📈 Volume — massive amounts of data\n  ⚡ Velocity — generated at high speed\n  🎨 Variety — structured & unstructured types\n\n💡 Our dataset is a small-scale example:\n  • 10,500 records, 11 features, text + numbers\n  • Real companies deal with millions of reviews daily!'
+  },
+
+  // ── FUN FACTS ──
+  {
+    match: q => /fun fact|interesting fact|did you know|tell me something interesting|something cool|surprise me|random fact|trivia/.test(q),
+    reply: () => {
+      const facts = [
+        '💡 Fun fact: **Amazon receives over 3.5 million customer reviews every single day!**\n\nOur dataset of 10,500 reviews would be uploaded in just a few seconds on Amazon\'s scale! 📊',
+        '💡 Fun fact: **The human brain processes images 60,000 times faster than text.**\n\nThat\'s why visual dashboards like this one are so effective for communicating data insights! 📊',
+        '💡 Fun fact: **1 negative review can take 40 positive reviews to counteract** in terms of customer trust.\n\nThat\'s why addressing our 35% negative reviews is so critical for these e-commerce platforms! 😊',
+        '💡 Fun fact: **"Terrible" is the most common negative word** in our dataset with 872 mentions!\n\nIt appears in reviews across all 5 platforms and 10 categories. 📊',
+        '💡 Fun fact: **Meesho, despite being a newer platform**, achieves the highest sentiment score (0.124) in our dataset!\n\nThis shows that careful seller vetting beats raw volume every time. 🛒',
+        '💡 Fun fact: **Positive reviews peak in October–December** in our dataset — Diwali season effect!\n\nFestive shopping brings more excitement and better customer experiences. 🪔'
+      ];
+      return facts[Math.floor(Math.random()*facts.length)];
+    }
+  },
+
+  // ── YES/NO QUESTIONS about the data ──
+  {
+    match: q => /is (amazon|flipkart|myntra|nykaa|meesho) (the )?(best|worst|top|bottom|highest|lowest)/.test(q),
+    reply: q => {
+      if(/meesho.*best|best.*meesho/) return '✅ Yes! **Meesho** IS the best-performing platform with a sentiment score of **0.124** — the highest of all 5 platforms! Its careful seller selection model is clearly paying off. 🏆';
+      if(/nykaa.*worst|worst.*nykaa/) return '⚠️ Yes, **Nykaa** has the lowest sentiment score (**0.087**) despite having the highest review volume. This suggests quality control issues even with a large customer base. 📉';
+      if(/amazon.*best|best.*amazon/) return '🔵 Amazon is **second best** with a score of 0.109, just behind Meesho (0.124). It\'s a solid performer but there\'s room to improve!';
+      return '🛒 Here\'s the full platform ranking:\n  1. 🟢 Meesho — 0.124 ✅ Best\n  2. 🔵 Amazon — 0.109\n  3. 🔵 Flipkart — 0.108\n  4. 🟠 Myntra — 0.102\n  5. 🔴 Nykaa — 0.087 ⚠️ Worst\n\nWhat else would you like to know?';
+    }
+  },
+
+  // ── WHAT IS THE TIME ──
+  {
+    match: q => /what('?s| is) the (time|current time)|what time is it|current time|time now/.test(q),
+    reply: () => {
+      const now = new Date();
+      const time = now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+      const date = now.toLocaleDateString([], {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+      return `🕐 Current Time: **${time}**\n📅 Date: **${date}**\n\n(Based on your device's local time) 😊`;
+    }
+  },
+
+  // ── WHAT IS THE DATE ──
+  {
+    match: q => /what('?s| is) (the )?(date|today|today'?s date)|today is|what day/.test(q),
+    reply: () => {
+      const now = new Date();
+      const date = now.toLocaleDateString([], {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+      return `📅 Today is: **${date}**\n\n💡 For context, our dataset covers Jan 2023 – Dec 2024! 📊`;
+    }
+  },
+
+  // ── MOTIVATIONAL ──
+  {
+    match: q => /motivat|inspire|inspirational|quote|encourage|positive (message|quote|thought)|lift me up|cheer me up/.test(q),
+    reply: () => {
+      const quotes = [
+        '💪 "Data is the new oil — but like oil, it needs to be refined to be valuable."\n\n— That\'s exactly what this BI dashboard does with 10,500 reviews! 📊',
+        '🌟 "Every customer complaint is a gift — it tells you exactly where to improve."\n\nOur dataset has 3,676 such gifts waiting to be acted on! 🎁',
+        '🚀 "Without data, you\'re just another person with an opinion."\n\n— W. Edwards Deming\n\nWith 10,500 data points, we\'re well beyond opinions! 😄',
+        '💡 "The goal is to turn data into information, and information into insight."\n\n— Carly Fiorina\n\nThat\'s exactly what this BI dashboard achieves! 📈'
+      ];
+      return quotes[Math.floor(Math.random()*quotes.length)];
+    }
+  },
+
+  // ── WHAT IS ECOMMERCE ──
+  {
+    match: q => /what is (e-?commerce|online shopping|digital marketing)|explain e-?commerce/.test(q),
+    reply: () => '🛒 **E-Commerce** (Electronic Commerce) is buying and selling goods/services online.\n\nKey players in our dataset:\n  🛒 Amazon — global marketplace leader\n  🛍️ Flipkart — India\'s top marketplace\n  👗 Myntra — fashion-focused platform\n  💄 Nykaa — beauty & wellness\n  🏪 Meesho — social commerce platform\n\n💡 India\'s e-commerce market is projected to reach $300B+ by 2030!'
+  },
+
+  // ── WEATHER ──
+  {
+    match: q => /what('?s| is) the weather|weather (today|now|forecast|report)|will it rain|temperature today/.test(q),
+    reply: () => '🌤️ I don\'t have live weather access, but you can check:\n  • **Google:** just search your city + "weather"\n  • **weather.com** for detailed forecasts\n  • **AccuWeather** for hourly data\n\nIs there anything data-related I can help you with? 😊'
+  },
+
+  // ── WHO IS FAMOUS PERSON ──
+  {
+    match: q => /who is (elon musk|bill gates|steve jobs|jeff bezos|mark zuckerberg|sundar pichai|satya nadella|sam altman|jensen huang)/.test(q),
+    reply: q => {
+      const people = {
+        'elon musk': '🚀 **Elon Musk** is CEO of Tesla, SpaceX & X (formerly Twitter).\n\nKnown for: Electric vehicles, space exploration, and outspoken tech opinions.\n\nFun fact: He was born in South Africa and is one of the world\'s wealthiest people! 💰',
+        'bill gates': '💻 **Bill Gates** co-founded Microsoft in 1975.\n\nKnown for: Making personal computers accessible, Windows OS, and now — philanthropy through the Bill & Melinda Gates Foundation.\n\nFun fact: He dropped out of Harvard! 🎓',
+        'jeff bezos': '📦 **Jeff Bezos** founded Amazon in 1994 from his garage!\n\nKnown for: Building Amazon into a $2T empire, AWS cloud computing, and Blue Origin space company.\n\nFun fact: Amazon started as an online bookstore! 📚',
+        'mark zuckerberg': '📱 **Mark Zuckerberg** co-founded Facebook (now Meta) at Harvard in 2004.\n\nKnown for: Facebook, Instagram, WhatsApp, and his metaverse vision.\n\nFun fact: He codes regularly and speaks Mandarin Chinese! 🈷️',
+        'sam altman': '🤖 **Sam Altman** is CEO of OpenAI — the company behind ChatGPT!\n\nKnown for: Democratizing AI, GPT models, and a brief (very dramatic) firing and rehiring in 2023!\n\nFun fact: I\'m powered by Anthropic\'s Claude — OpenAI\'s main competitor! 😄'
+      };
+      for(const [name, bio] of Object.entries(people)){
+        if(q.includes(name)) return bio;
+      }
+      return '👤 That\'s an interesting person! Let me pass this to Claude AI for a detailed answer...';
+    }
+  },
+
+  // ══════════════════════════════════
+  //   BI / DATA QUESTIONS
+  // ══════════════════════════════════
+
+  {
+    match: q => /overall|general sentiment|(customer.{0,10}sentiment)|(sentiment.{0,10}overall)|how (many|much) (positive|negative|neutral)|sentiment summary/.test(q),
+    reply: () => `📊 **Overall Sentiment — 10,500 Reviews:**\n\n  ✅ Positive : ${KPIs.pos}%  (4,786 reviews)\n  ❌ Negative : ${KPIs.neg}%  (3,676 reviews)\n  ➖ Neutral  : ${KPIs.neu}%  (2,038 reviews)\n\n  ⭐ Avg Rating      : ${KPIs.avgRating} / 5.0\n  📈 Avg Sent. Score : +${KPIs.avgScore} (range −1 to +1)\n  ✔️ Verified        : ${KPIs.verifiedPct}%\n\n💡 Majority of customers are satisfied, but the 35% negative segment shows significant room for improvement!`
+  },
+  {
+    match: q => /complaint|issue|problem|negative word|bad word|top word|top negative|most complained/.test(q),
+    reply: () => `🔴 **Top 5 Customer Complaint Words:**\n${COMPLAINTS.map((c,i)=>`  ${i+1}. "${c[0]}" — mentioned ${c[1].toLocaleString()} times`).join('\n')}\n\n💡 Product quality defects, delayed deliveries, and damaged items dominate negative feedback across all platforms.`
+  },
+  {
+    match: q => /trend|over time|monthly|changed|grow|spike|seasonal|year|2023|2024/.test(q),
+    reply: () => `📈 **Sentiment Trend Insights:**\n  • Positive reviews peak during festive months (Oct–Dec)\n  • Negative spikes during major sale events (Big Billion Days etc.)\n  • Review volume grew steadily from 2023 → 2024\n  • 2024 shows slight improvement in positives vs 2023\n\n💡 Scale up quality checks and customer support during Diwali and year-end sales for best results!`
+  },
+  {
+    match: q => /best.{0,15}(category|product|segment)|top.{0,15}category|highest.{0,10}(score|rating|sentiment)|best performing category/.test(q),
+    reply: () => `🏆 **Top Performing Categories:**\n  1. 🚗 Automotive     → Score: 0.129  ✅\n  2. 📱 Electronics    → Score: 0.119  ✅\n  3. 💄 Beauty         → Score: 0.113  ✅\n  4. 👗 Fashion        → Score: 0.111\n  5. 🏃 Sports         → Score: 0.108\n\n💡 Automotive and Electronics customers are the most satisfied — strong quality control and accurate product descriptions are key!`
+  },
+  {
+    match: q => /worst|lowest|poor|underperform|most complaint|bad categor|lowest performing|bottom categor/.test(q),
+    reply: () => `⚠️ **Underperforming Categories:**\n  1. 🏠 Home & Kitchen → Score: 0.100\n  2. 💊 Health         → Score: 0.085\n  3. 📚 Books          → Score: 0.084  ⚠️ Lowest!\n\n💡 These categories show high complaint rates around damaged packaging, inaccurate descriptions, and delivery delays. Immediate quality intervention needed!`
+  },
+  {
+    match: q => /platform|amazon|flipkart|myntra|nykaa|meesho|compare platform|site|marketplace|which platform/.test(q),
+    reply: () => `🛒 **Platform Sentiment Scores:**\n  1. 🟢 Meesho   → 0.124  ✅ Best performer\n  2. 🔵 Amazon   → 0.109\n  3. 🔵 Flipkart → 0.108\n  4. 🟠 Myntra   → 0.102\n  5. 🔴 Nykaa    → 0.087  ⚠️ Needs improvement\n\n  📦 Top review volume: Nykaa (despite lowest score!)\n\n💡 Nykaa needs urgent seller vetting and quality checks. Meesho\'s careful seller selection model is clearly paying dividends!`
+  },
+  {
+    match: q => /recommend|suggest|improve|advice|what should|action|strategy|plan|how to improve|steps to|what can be done/.test(q),
+    reply: () => `💼 **Business Improvement Recommendations:**\n${SUGGESTIONS.map((s,i)=>`  ${i+1}. ${s}`).join('\n')}\n\n💡 Implementing these can shift the 35% negative segment down by an estimated 8–12%, adding millions in revenue!`
+  },
+  {
+    match: q => /kpi|key performance|metrics|summary|all stats|all number|all data|show (me )?everything|full report|complete summary/.test(q),
+    reply: () => `📌 **Full KPI Dashboard:**\n  📦 Total Reviews       : ${KPIs.total.toLocaleString()}\n  ✅ Positive Sentiment  : ${KPIs.pos}%\n  ❌ Negative Sentiment  : ${KPIs.neg}%\n  ➖ Neutral Sentiment   : ${KPIs.neu}%\n  ⭐ Average Rating      : ${KPIs.avgRating} / 5\n  📊 Avg Sentiment Score : +${KPIs.avgScore}\n  🏆 Best Category       : ${KPIs.bestCat} (0.129)\n  ⚠️ Worst Category      : ${KPIs.worstCat} (0.084)\n  🛒 Best Platform       : ${KPIs.bestPlatform} (0.124)\n  📦 Top Volume          : ${KPIs.topPlatform}\n  ✔️ Verified Purchases  : ${KPIs.verifiedPct}%`
+  },
+  {
+    match: q => /dataset|data set|how many|records|features|columns|rows|describe|about the data|data structure|data info/.test(q),
+    reply: () => `📁 **Dataset Overview:**\n  📦 Total Records   : 10,500 rows\n  📅 Date Range      : January 2023 – December 2024\n  🛒 Platforms       : Amazon, Flipkart, Myntra, Nykaa, Meesho\n  🏷️ Categories      : 10 product categories\n  📋 Features        : 11 columns\n  ✔️ Verified        : 74.4% verified purchases\n\n📋 **Columns:**\n  review_id, review_text, rating, sentiment_label,\n  sentiment_score, product_category, platform,\n  date, month, helpful_votes, verified_purchase\n\n💡 Click the "Dataset" tab above to explore sample records!`
+  },
+  {
+    match: q => /verified|unverified|authentic|fake review|genuine review/.test(q),
+    reply: () => `✔️ **Verified Purchase Stats:**\n  • Verified reviews   : 7,812 (74.4%)\n  • Unverified reviews : 2,688 (25.6%)\n\n💡 High verification rate (74.4%) means our sentiment data is largely trustworthy and representative of real buyers — not spam or fake reviews!`
+  },
+  {
+    match: q => /average rating|avg rating|mean rating|star rating|rating average/.test(q),
+    reply: () => `⭐ **Average Rating Analysis:**\n  • Overall avg : 3.21 / 5.0\n  • Best platform (Meesho) : ~3.8 / 5\n  • Worst (Nykaa) : ~2.9 / 5\n  • Best category (Automotive) : ~3.9 / 5\n  • Worst category (Books) : ~2.7 / 5\n\n💡 A 3.21 average suggests customers are moderately satisfied but clearly expecting better — improving from 3.2 to 3.8+ would be transformative!`
+  },
+  {
+    match: q => /positive word|happy word|top positive|best (review )?word|most positive word/.test(q),
+    reply: () => `🟢 **Top 5 Positive Keywords in Reviews:**\n  1. "excellent"    — ~620 mentions\n  2. "outstanding"  — ~580 mentions\n  3. "recommend"    — ~540 mentions\n  4. "superb"       — ~490 mentions\n  5. "love"         — ~460 mentions\n\n💡 Customers who love products mention quality, value for money, and fast delivery most often!`
+  },
+
+  // ── WHAT IS / DEFINE ──
+  {
+    match: q => /what is (the meaning of|definition of|a|an) /.test(q) && !/(what is the (time|date|weather|temperature))/.test(q),
+    reply: () => null // pass to Claude AI for definitions
+  },
+
+  // ── HOW TO QUESTIONS ──
+  {
+    match: q => /how to (use|navigate|read|understand) (this|the) (dashboard|chatbot|app|chart)/.test(q),
+    reply: () => '📊 **How to use this dashboard:**\n\n  📊 **Dashboard tab** → KPI cards, charts & visualizations\n  🤖 **Chatbot tab** → Chat with me! (you\'re here now)\n  💡 **Insights tab** → Key findings & recommendations\n  📁 **Dataset tab** → Sample data, column info & stats\n\n**Click the tabs** at the top to switch views!\n**Click any KPI card** for details.\n**Use Quick Queries** on the left for instant answers! 😊'
+  },
+
+  // ── GOODBYE WORDS ──
+  {
+    match: q => /(bye|goodbye|see you|see ya|cya|later|take care|farewell|good night|goodnight|gn|ttyl).{0,15}$/.test(q),
+    reply: () => {
+      const opts = [
+        '👋 Goodbye! Thank you for using the BI Intelligence Agent! Have a wonderful day! 😊',
+        '🌟 See you later! Hope the insights were helpful! Take care! 👋',
+        '👋 Bye! Come back anytime for more data insights! 😊✨'
+      ];
+      return opts[Math.floor(Math.random()*opts.length)];
+    }
+  },
+];
+
+// ── Smart response engine ──────────────────────────────
+function getSmartResponse(rawInput) {
+  const q = rawInput.toLowerCase().trim();
+  for (const p of PATTERNS) {
+    const result = p.match(q);
+    if (result) {
+      const reply = typeof p.reply === 'function' ? p.reply(q) : p.reply;
+      return reply; // null means pass to API
+    }
+  }
+  return undefined; // no pattern matched at all
+}
+
+// ── Claude API fallback ───────────────────────────────
+let conversationHistory = [];
+
+async function callClaudeAPI(userMsg) {
+  const systemPrompt = `You are a friendly, warm, and conversational BI Intelligence Agent embedded in a customer review analytics dashboard. You behave exactly like ChatGPT — helpful, knowledgeable, conversational, and fun.
+
+Dataset context (always available): 10,500 customer reviews, 5 platforms (Amazon, Flipkart, Myntra, Nykaa, Meesho), 10 product categories (Automotive best at 0.129, Books worst at 0.084), Jan 2023–Dec 2024. Sentiment: 45.6% Positive, 35% Negative, 19.4% Neutral. Avg rating 3.21/5, avg score +0.106. Best platform: Meesho (0.124 score). Top complaints: "terrible" (872), "awful" (664), "horrible" (664), "waste" (498), "pathetic" (448). 74.4% verified purchases.
+
+Your personality:
+- Warm, friendly, and conversational like a helpful friend
+- For greetings: respond warmly, introduce yourself, ask how you can help
+- For "how are you": say you're great and ask back
+- For farewells: warm goodbye
+- For compliments: respond humbly and warmly
+- For jokes: tell a short, witty data/tech related joke
+- For general knowledge questions: answer helpfully and informatively
+- For math: attempt the calculation
+- For weather: explain you don't have live weather but suggest alternatives
+- For definitions: give clear, concise explanations
+- For opinions: give balanced, thoughtful responses
+- For emotional support: be empathetic and encouraging
+- Always be conversational, friendly, and upbeat
+- Keep responses under 150 words unless detail is specifically needed
+- Use emojis naturally but don't overdo it
+- Format nicely with line breaks when listing things`;
+
+  conversationHistory.push({ role: 'user', content: userMsg });
+
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 400,
+      system: systemPrompt,
+      messages: conversationHistory
+    })
+  });
+  const data = await response.json();
+  const reply = data.content?.find(b => b.type === 'text')?.text
+    || 'Sorry, I had trouble responding. Please try again! 😊';
+  conversationHistory.push({ role: 'assistant', content: reply });
+  if (conversationHistory.length > 30) conversationHistory = conversationHistory.slice(-30);
+  return reply;
+}
+
+// ── UI helpers ──────────────────────────────────────
+function addMsg(text, role) {
+  const msgs = document.getElementById('chatMsgs');
+  const div = document.createElement('div');
+  div.className = 'msg ' + role;
+  const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const formatted = text
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  div.innerHTML = `<div class="msg-bubble">${formatted}</div><div class="msg-meta">${role==='user'?'You':'BI Agent'} · ${now}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+
+function showTyping() {
+  const msgs = document.getElementById('chatMsgs');
+  const div = document.createElement('div');
+  div.className = 'msg bot typing-indicator';
+  div.id = 'typingDots';
+  div.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+function hideTyping() { const t = document.getElementById('typingDots'); if(t) t.remove(); }
+
+// ── Main send ───────────────────────────────────────
+async function sendMsg() {
+  const input = document.getElementById('chatInput');
+  const val = input.value.trim();
+  if (!val) return;
+
+  addMsg(val, 'user');
+  input.value = '';
+  showTyping();
+
+  const delay = 400 + Math.random() * 400;
+  await new Promise(r => setTimeout(r, delay));
+
+  const local = getSmartResponse(val);
+
+  // null = pattern matched but wants API; undefined = no pattern matched
+  if (local !== null && local !== undefined) {
+    hideTyping();
+    addMsg(local, 'bot');
+    return;
+  }
+
+  // Fall back to Claude AI
+  try {
+    const reply = await callClaudeAPI(val);
+    hideTyping();
+    addMsg(reply, 'bot');
+  } catch(err) {
+    hideTyping();
+    addMsg('😔 Couldn\'t reach AI right now. But I can still help!\n\nTry:\n  → "Overall sentiment?"\n  → "Top complaints"\n  → "Show KPIs"\n  → "Tell me a joke"\n  → "What is AI?"', 'bot');
+  }
+}
+
+function sendQuick(q) {
+  switchTab('chatbot', document.querySelectorAll('.tab-btn')[1]);
+  setTimeout(() => {
+    const input = document.getElementById('chatInput');
+    input.value = q;
+    sendMsg();
+  }, 150);
+}
+
+function clearChat() {
+  const msgs = document.getElementById('chatMsgs');
+  msgs.innerHTML = '';
+  conversationHistory = [];
+  addMsg('🔄 Chat cleared! I\'m reset and ready.\n\nAsk me anything — data questions, general knowledge, math, jokes, or just say hello! 😊', 'bot');
+  showToast('Chat cleared', 'var(--muted2)');
+}
+</script>
+</body>
+</html>
